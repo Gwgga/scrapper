@@ -117,11 +117,12 @@ async def page_processing(
     if params.play_with_browser:
         for action in params.play_with_browser:
             if action.Action == "Click" and action.Selector:
-                # click on the selector and wait for navigation
-                await page.click(action.Selector)
+                # context to wait for navigation
                 if action.WaitForUrlChange:
-                    # wait until navigation has occurred, checking for URL change
-                    await page.wait_for_navigation()
+                    async with page.expect_navigation():
+                        await page.click(action.Selector)
+                else:
+                    await page.click(action.Selector)
             elif action.Action == "Wait" and action.Timeout:
                 await page.wait_for_timeout(action.Timeout)
             elif action.Action == "ScrollX" and action.Value is not None:
