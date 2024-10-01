@@ -6,6 +6,8 @@ from typing import Annotated
 from urllib.parse import urlparse
 
 import validators
+
+from pydantic import BaseModel
 import json
 
 from fastapi import Query
