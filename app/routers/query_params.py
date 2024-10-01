@@ -106,6 +106,17 @@ class CommonQueryParams:
                 ge=0,
             ),
         ] = 0,
+        play_with_browser: Annotated[
+            str | None,
+            Query(
+                alias="play-with-browser",
+                description=(
+                    "Set of browser actions (JSON encoded) to interact with the page before scraping.<br>"
+                    "For example: [{\"Action\": \"Click\", \"Selector\": \"#button_id\"}, "
+                    "{\"Action\": \"Wait\", \"Timeout\": 5000}]."
+                )
+            ),
+        ] = None,
     ):
         self.cache = cache
         self.full_content = full_content
@@ -113,6 +124,13 @@ class CommonQueryParams:
         self.screenshot = screenshot
         self.user_scripts = None
         self.user_scripts_timeout = user_scripts_timeout
+        self.play_with_browser = None
+
+        if play_with_browser:
+            try:
+                self.play_with_browser = [BrowserAction(**action) for action in json.loads(play_with_browser)]
+            except (json.JSONDecodeError, TypeError) as exc:
+                raise QueryParsingError("playWithBrowser", "Invalid JSON format for browser actions", str(exc))
 
         if user_scripts:
             user_scripts = list(filter(None, map(str.strip, user_scripts.split(','))))
