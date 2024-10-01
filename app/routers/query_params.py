@@ -6,12 +6,19 @@ from typing import Annotated
 from urllib.parse import urlparse
 
 import validators
+import json
 
 from fastapi import Query
 
 from internal.errors import QueryParsingError
 from settings import USER_SCRIPTS_DIR, DEVICE_REGISTRY
 
+class BrowserAction(BaseModel):
+    Action: str
+    Selector: str | None = None
+    Timeout: int | None = None
+    Value: int | str | None = None
+    Execute: str | None = None
 
 class WaitUntilEnum(str, Enum):
     LOAD = 'load'
@@ -130,7 +137,7 @@ class CommonQueryParams:
             try:
                 self.play_with_browser = [BrowserAction(**action) for action in json.loads(play_with_browser)]
             except (json.JSONDecodeError, TypeError) as exc:
-                raise QueryParsingError("playWithBrowser", "Invalid JSON format for browser actions", str(exc))
+                raise QueryParsingError('playWithBrowser', 'Invalid JSON format for browser actions', str(exc))
 
         if user_scripts:
             user_scripts = list(filter(None, map(str.strip, user_scripts.split(','))))
