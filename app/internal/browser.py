@@ -113,6 +113,22 @@ async def page_processing(
     # noinspection PyTypeChecker
     await page.goto(url, timeout=browser_params.timeout, wait_until=browser_params.wait_until)
 
+    # perform the actions of the play-with-browser parameter, if provided
+    if params.play_with_browser:
+        for action in params.play_with_browser:
+            if action.Action == "Click" and action.Selector:
+                await page.click(action.Selector)
+            elif action.Action == "Wait" and action.Timeout:
+                await page.wait_for_timeout(action.Timeout)
+            elif action.Action == "ScrollX" and action.Value is not None:
+                await page.evaluate(f"window.scrollBy({action.Value}, 0);")
+            elif action.Action == "ScrollY" and action.Value is not None:
+                await page.evaluate(f"window.scrollBy(0, {action.Value});")
+            elif action.Action == "Fill" and action.Selector and action.Value is not None:
+                await page.fill(action.Selector, action.Value)
+            elif action.Action == "Execute" and action.Execute:
+                await page.evaluate(action.Execute)
+
     # wait for the given timeout in milliseconds and scroll down the page
     n = 10
     if browser_params.sleep:
