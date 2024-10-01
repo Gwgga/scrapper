@@ -15,19 +15,22 @@ from fastapi import Query
 from internal.errors import QueryParsingError
 from settings import USER_SCRIPTS_DIR, DEVICE_REGISTRY
 
+
 class BrowserAction(BaseModel):
     Action: str
     Selector: str | None = None
     Timeout: int | None = None
     Value: int | str | None = None
     Execute: str | None = None
+    WaitForUrlChange: bool | None = None
+    
 
 class WaitUntilEnum(str, Enum):
     LOAD = 'load'
     DOMCONTENTLOADED = 'domcontentloaded'
     NETWORKIDLE = 'networkidle'
     COMMIT = 'commit'
-
+    
 
 class URLParam:
     def __init__(
