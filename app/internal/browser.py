@@ -95,7 +95,7 @@ async def page_processing(
     browser_params: BrowserQueryParams,
     init_scripts: Sequence[str] = None,
 ):
-    page.on("console", lambda msg: print(f"Console log: {msg.text()}"))
+    page.on("console", lambda msg: print(f"Console log: {msg.text}"))
     
     # add browser cookies before page load, if provided
     if params.cookies:
