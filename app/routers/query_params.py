@@ -54,6 +54,12 @@ class Cookie(BaseModel):
                 cookie_data["expires"] = int(expiration)
 
         return cls(**cookie_data)
+        
+    def dict(self, **kwargs):
+        cookie_dict = super().dict(**kwargs)
+        if cookie_dict.get("expires") is None:
+            del cookie_dict["expires"]
+        return cookie_dict
 
     @staticmethod
     def _convert_same_site(same_site: str) -> str:
