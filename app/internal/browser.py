@@ -95,6 +95,11 @@ async def page_processing(
     browser_params: BrowserQueryParams,
     init_scripts: Sequence[str] = None,
 ):
+    # add browser cookies before page load, if provided
+    if params.cookies:
+        for cookie in params.cookies:
+            await page.context.add_cookies([cookie.dict()])
+    
     # add stealth scripts for bypassing anti-scraping mechanisms
     if params.stealth:
         await use_stealth_mode(page)
