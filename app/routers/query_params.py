@@ -48,8 +48,9 @@ class Cookie(BaseModel):
             "sameSite": data.get("sameSite", "Lax").capitalize()
         }
         
-        if data.get("expires"):
-            cookie_data["expires"] = data.get("expires")
+        if not data.get("session", False):
+            if "expires" in data and isinstance(data["expires"], (int, float)):
+                cookie_data["expires"] = data["expires"]
         
         return cls(**cookie_data)
     
