@@ -179,7 +179,7 @@ class CommonQueryParams:
 
         if cookies:
             try:
-                self.cookies = [Cookie(**cookie) for cookie in json.loads(cookies)]
+                self.cookies = [Cookie.from_dict(cookie) for cookie in json.loads(cookies)]
             except (json.JSONDecodeError, TypeError) as exc:
                 raise QueryParsingError("cookies", "Invalid JSON format for cookies", str(exc))
 
