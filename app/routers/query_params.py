@@ -33,11 +33,11 @@ class Cookie(BaseModel):
     secure: bool | None = False
     httpOnly: bool | None = False
     sameSite: str | None = "Lax"
-    #expires: int | None = None
+    expires: int | None = None
 
     @classmethod
     def from_dict(cls, data: dict):
-        '''Convert cookie JSON into the format expected by Playwright'''
+        """Converter o JSON de cookie no formato esperado pelo Playwright"""
         cookie_data = {
             "domain": data.get("domain"),
             "name": data.get("name"),
@@ -45,15 +45,28 @@ class Cookie(BaseModel):
             "path": data.get("path", "/"),
             "secure": data.get("secure", False),
             "httpOnly": data.get("httpOnly", False),
-            "sameSite": data.get("sameSite", "Lax").capitalize()
+            "sameSite": cls._convert_same_site(data.get("sameSite", "Lax"))
         }
-        '''
-        if not data.get("session", False):
-            if "expires" in data and isinstance(data["expires"], (int, float)):
-                cookie_data["expires"] = data["expires"]
-        '''
         
+        if not data.get("session", False):
+            expiration = data.get("expires") or data.get("expirationDate")
+            if expiration is not None:
+                cookie_data["expires"] = int(expiration)
+
         return cls(**cookie_data)
+
+    @staticmethod
+    def _convert_same_site(same_site: str) -> str:
+        '''Convert cookie JSON into the format expected by Playwright'''
+        same_site = same_site.lower()
+        if same_site == "no_restriction":
+            return "None"
+        elif same_site == "lax":
+            return "Lax"
+        elif same_site == "strict":
+            return "Strict"
+        return "Lax"
+
     
 
 class WaitUntilEnum(str, Enum):
