@@ -37,7 +37,7 @@ class Cookie(BaseModel):
 
     @classmethod
     def from_dict(cls, data: dict):
-        """Converter o JSON de cookie no formato esperado pelo Playwright"""
+        '''Convert cookie JSON into the format expected by Playwright'''
         cookie_data = {
             "domain": data.get("domain"),
             "name": data.get("name"),
