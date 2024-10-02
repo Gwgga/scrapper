@@ -38,16 +38,20 @@ class Cookie(BaseModel):
     @classmethod
     def from_dict(cls, data: dict):
         """Convert cookie JSON into the format expected by Playwright"""
-        return cls(
-            domain=data.get("domain"),
-            name=data.get("name"),
-            value=data.get("value"),
-            path=data.get("path", "/"),
-            secure=data.get("secure", False),
-            httpOnly=data.get("httpOnly", False),
-            sameSite=data.get("sameSite", "Lax").capitalize(),
-            expires=None if data.get("session", False) else data.get("expires")
-        )
+        cookie_data = {
+            "domain": data.get("domain"),
+            "name": data.get("name"),
+            "value": data.get("value"),
+            "path": data.get("path", "/"),
+            "secure": data.get("secure", False),
+            "httpOnly": data.get("httpOnly", False),
+            "sameSite": data.get("sameSite", "Lax").capitalize()
+        }
+        
+        if not data.get("session", False):
+            cookie_data["expires"] = data.get("expires")
+        
+        return cls(**cookie_data)
     
 
 class WaitUntilEnum(str, Enum):
