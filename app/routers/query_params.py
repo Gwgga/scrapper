@@ -23,6 +23,20 @@ class BrowserAction(BaseModel):
     Value: int | str | None = None
     Execute: str | None = None
     WaitForUrlChange: bool | None = None
+
+
+class Cookie(BaseModel):
+    domain: str | None = None
+    hostOnly: bool | None = False
+    httpOnly: bool | None = False
+    name: str
+    path: str | None = "/"
+    sameSite: str | None = "Lax"
+    secure: bool | None = False
+    session: bool | None = False
+    storeId: str | None = None
+    expires: int | None = None
+    value: str
     
 
 class WaitUntilEnum(str, Enum):
@@ -129,6 +143,13 @@ class CommonQueryParams:
                 )
             ),
         ] = None,
+        cookies: Annotated[
+            str | None,
+            Query(
+                description="Optional JSON containing cookies to be set before loading the page.<br>"
+                            "Example: [{'name': 'cookie_name', 'value': 'cookie_value', 'domain': 'example.com'}]"
+            ),
+        ] = None,
     ):
         self.cache = cache
         self.full_content = full_content
@@ -143,6 +164,12 @@ class CommonQueryParams:
                 self.play_with_browser = [BrowserAction(**action) for action in json.loads(play_with_browser)]
             except (json.JSONDecodeError, TypeError) as exc:
                 raise QueryParsingError('playWithBrowser', 'Invalid JSON format for browser actions', str(exc))
+
+        if cookies:
+            try:
+                self.cookies = [Cookie(**cookie) for cookie in json.loads(cookies)]
+            except (json.JSONDecodeError, TypeError) as exc:
+                raise QueryParsingError("cookies", "Invalid JSON format for cookies", str(exc))
 
         if user_scripts:
             user_scripts = list(filter(None, map(str.strip, user_scripts.split(','))))
