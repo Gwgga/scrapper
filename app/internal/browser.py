@@ -98,7 +98,6 @@ async def page_processing(
     # add browser cookies before page load, if provided
     if params.cookies:
         for cookie in params.cookies:
-            print(cookie.dict())
             await page.context.add_cookies([cookie.dict()])
     
     # add stealth scripts for bypassing anti-scraping mechanisms
