@@ -33,11 +33,11 @@ class Cookie(BaseModel):
     secure: bool | None = False
     httpOnly: bool | None = False
     sameSite: str | None = "Lax"
-    expires: int | None = None
+    #expires: int | None = None
 
     @classmethod
     def from_dict(cls, data: dict):
-        """Convert cookie JSON into the format expected by Playwright"""
+        '''Convert cookie JSON into the format expected by Playwright'''
         cookie_data = {
             "domain": data.get("domain"),
             "name": data.get("name"),
@@ -47,10 +47,11 @@ class Cookie(BaseModel):
             "httpOnly": data.get("httpOnly", False),
             "sameSite": data.get("sameSite", "Lax").capitalize()
         }
-        
+        '''
         if not data.get("session", False):
             if "expires" in data and isinstance(data["expires"], (int, float)):
                 cookie_data["expires"] = data["expires"]
+        '''
         
         return cls(**cookie_data)
     
