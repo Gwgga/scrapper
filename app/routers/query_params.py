@@ -158,6 +158,7 @@ class CommonQueryParams:
         self.user_scripts = None
         self.user_scripts_timeout = user_scripts_timeout
         self.play_with_browser = None
+        self.cookies = None
 
         if play_with_browser:
             try:
