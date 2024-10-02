@@ -26,17 +26,28 @@ class BrowserAction(BaseModel):
 
 
 class Cookie(BaseModel):
-    domain: str | None = None
-    hostOnly: bool | None = False
-    httpOnly: bool | None = False
+    domain: str
     name: str
-    path: str | None = "/"
-    sameSite: str | None = "Lax"
-    secure: bool | None = False
-    session: bool | None = False
-    storeId: str | None = None
-    expires: int | None = None
     value: str
+    path: str | None = "/"
+    secure: bool | None = False
+    httpOnly: bool | None = False
+    sameSite: str | None = "Lax"
+    expires: int | None = None
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Convert cookie JSON into the format expected by Playwright"""
+        return cls(
+            domain=data.get("domain"),
+            name=data.get("name"),
+            value=data.get("value"),
+            path=data.get("path", "/"),
+            secure=data.get("secure", False),
+            httpOnly=data.get("httpOnly", False),
+            sameSite=data.get("sameSite", "Lax").capitalize(),
+            expires=None if data.get("session", False) else data.get("expires")
+        )
     
 
 class WaitUntilEnum(str, Enum):
